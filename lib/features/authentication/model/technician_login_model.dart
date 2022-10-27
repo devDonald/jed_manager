@@ -16,12 +16,14 @@ class TechnicianLoginModel {
     this.password,
     this.longitude,
     this.latitude,
+    this.resolvedAddress,
   });
 
   String? technicianId;
   String? password;
   String? longitude;
   String? latitude;
+  String? resolvedAddress;
 
   factory TechnicianLoginModel.fromJson(Map<String, dynamic> json) =>
       TechnicianLoginModel(
@@ -29,6 +31,7 @@ class TechnicianLoginModel {
         password: json["password"],
         longitude: json["longitude"],
         latitude: json["latitude"],
+        resolvedAddress: json["resolved_address"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -36,5 +39,6 @@ class TechnicianLoginModel {
         "password": password,
         "longitude": longitude,
         "latitude": latitude,
+        "resolved_address": resolvedAddress,
       };
 }

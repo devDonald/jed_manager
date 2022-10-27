@@ -9,8 +9,9 @@ import '../../../core/widgets/primary_button.dart';
 import '../feeders/services/feeder_services.dart';
 import 'controller/distribution_controller.dart';
 
-class UpdateInfo extends StatefulWidget {
+class UpdateCustomerBill extends StatefulWidget {
   final String token,
+      mapAddress,
       longitude,
       latitude,
       status,
@@ -19,10 +20,11 @@ class UpdateInfo extends StatefulWidget {
       feederId,
       dtName,
       dtId,
-      statusId;
+      statusId,
+      billId;
 
   static const String id = 'UpdateInfo';
-  const UpdateInfo(
+  const UpdateCustomerBill(
       {Key? key,
       required this.token,
       required this.longitude,
@@ -31,16 +33,18 @@ class UpdateInfo extends StatefulWidget {
       required this.customerNo,
       required this.feederId,
       required this.dtId,
+      required this.mapAddress,
       required this.dtName,
       required this.statusId,
+      required this.billId,
       required this.feeder})
       : super(key: key);
 
   @override
-  _UpdateInfoState createState() => _UpdateInfoState();
+  _UpdateCustomerBillState createState() => _UpdateCustomerBillState();
 }
 
-class _UpdateInfoState extends State<UpdateInfo> {
+class _UpdateCustomerBillState extends State<UpdateCustomerBill> {
   DistributionController cont = DistributionController.to;
 
   final _status = TextEditingController();
@@ -49,21 +53,17 @@ class _UpdateInfoState extends State<UpdateInfo> {
   final dt = TextEditingController();
 
   List<Map> _feederSearch = [];
-
-  List<Map> _statusSearch = [];
   List<Map> _dtSearch = [];
 
   String feederId = '1', dtID = '1', statusId = '1', areaId = '1';
 
   Future<void> getFeeder() async {
     _feederSearch =
-        await FeederServices.getFeeder('marketer/getAllFeeders', widget.token);
-    _statusSearch =
-        await FeederServices.getStatus('marketer/getAllStatuses', widget.token);
+        await HelperServices.getFeeder('marketer/getAllFeeders', widget.token);
   }
 
   Future<void> getDT() async {
-    _dtSearch = await FeederServices.getDT(
+    _dtSearch = await HelperServices.getDT(
         'marketer/getFeederDts', widget.token, feederId);
   }
 
@@ -116,38 +116,6 @@ class _UpdateInfoState extends State<UpdateInfo> {
           ),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TypeAheadField(
-                  textFieldConfiguration: TextFieldConfiguration(
-                    autofocus: false,
-                    controller: _status,
-                    style: const TextStyle(
-                      color: ThemeColors.primaryGreyColor,
-                      fontSize: 20.0,
-                    ),
-                    decoration: const InputDecoration(hintText: 'Status'),
-                  ),
-                  suggestionsCallback: (pattern) async {
-                    // Here you can call http call
-                    return _statusSearch.where(
-                      (doc) => jsonEncode(doc)
-                          .toLowerCase()
-                          .contains(pattern.toLowerCase()),
-                    );
-                  },
-                  itemBuilder: (context, dynamic suggestion) {
-                    return ListTile(
-                      title: Text(suggestion['name']),
-                    );
-                  },
-                  onSuggestionSelected: (dynamic suggestion) {
-                    // This when someone click the items
-                    _status.text = '${suggestion['name']}';
-                    statusId = '${suggestion['id']}';
-                  },
-                ),
-              ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: TypeAheadField(
@@ -239,14 +207,15 @@ class _UpdateInfoState extends State<UpdateInfo> {
                         _feeder.text != '' ||
                         _receiverNo.text != '') {
                       UpdateCustomerModel model = UpdateCustomerModel(
+                          resolvedAddress: widget.mapAddress,
                           feederId: feederId,
                           dtId: int.parse(dtID),
                           billStatus: int.parse(statusId),
                           receiverPhoneNumber: _receiverNo.text,
                           longitude: widget.longitude,
                           latitude: widget.latitude);
-                      cont.updateAccount(
-                          model, widget.token, widget.customerNo);
+                      cont.updateAccount(model, widget.token, widget.customerNo,
+                          widget.billId);
                     }
                   },
                   buttonTitle: 'Update Record',

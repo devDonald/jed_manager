@@ -1,13 +1,14 @@
 // To parse this JSON data, do
 //
-//     final authModel = authModelFromJson(jsonString);
+//     final marketerAuthModel = marketerAuthModelFromJson(jsonString);
 
 import 'dart:convert';
 
-MarketerAuthModel authModelFromJson(String str) =>
+MarketerAuthModel marketerAuthModelFromJson(String str) =>
     MarketerAuthModel.fromJson(json.decode(str));
 
-String authModelToJson(MarketerAuthModel data) => json.encode(data.toJson());
+String marketerAuthModelToJson(MarketerAuthModel data) =>
+    json.encode(data.toJson());
 
 class MarketerAuthModel {
   MarketerAuthModel({
@@ -15,12 +16,14 @@ class MarketerAuthModel {
     this.password,
     this.longitude,
     this.latitude,
+    this.resolvedAddress,
   });
 
   String? marketerId;
   String? password;
   String? longitude;
   String? latitude;
+  String? resolvedAddress;
 
   factory MarketerAuthModel.fromJson(Map<String, dynamic> json) =>
       MarketerAuthModel(
@@ -28,6 +31,7 @@ class MarketerAuthModel {
         password: json["password"],
         longitude: json["longitude"],
         latitude: json["latitude"],
+        resolvedAddress: json["resolved_address"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -35,5 +39,6 @@ class MarketerAuthModel {
         "password": password,
         "longitude": longitude,
         "latitude": latitude,
+        "resolved_address": resolvedAddress,
       };
 }

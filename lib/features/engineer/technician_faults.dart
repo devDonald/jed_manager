@@ -2,18 +2,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jedmgr/core/constants/contants.dart';
 import 'package:jedmgr/features/engineer/my_fault_card.dart';
+import 'package:jedmgr/features/fault_reporting/update_fault.dart';
 
 import '../fault_reporting/controller/fault_controller.dart';
 
 class TechnicianFaults extends StatefulWidget {
   final String lat, long;
-  final String token;
+  final String token, address;
   const TechnicianFaults({
     Key? key,
     required this.lat,
     required this.long,
     required this.token,
+    required this.address,
   }) : super(key: key);
 
   @override
@@ -21,13 +24,11 @@ class TechnicianFaults extends StatefulWidget {
 }
 
 class TechnicianFaultsState extends State<TechnicianFaults> {
-  FaultController cont = FaultController.to;
-  String query = '';
+  FaultController fault = FaultController.to;
 
   @override
   void initState() {
-    cont.displayFaults(widget.token);
-    print("fault list: ${cont.faultModelList}");
+    fault.displayFaults(widget.token);
     super.initState();
   }
 
@@ -42,19 +43,46 @@ class TechnicianFaultsState extends State<TechnicianFaults> {
           style: TextStyle(fontSize: 25),
         ),
       ),
-      body: Expanded(child: Obx(() {
-        if (cont.isLoading.value) {
+      body: Obx(() {
+        if (fault.isLoading.value) {
           return const Center(child: Text('loading...'));
         } else {
-          return ListView.builder(
-            itemCount: cont.faultModelList.length,
-            shrinkWrap: true,
-            itemBuilder: (BuildContext context, int index) {
-              return MyFaultCard();
-            },
+          return SingleChildScrollView(
+            physics: const ScrollPhysics(),
+            child: ListView.builder(
+                itemCount: fault.faultModelList.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return MyFaultCard(
+                    color: fault.faultModelList[index]['statusColor'],
+                    faultType: fault.faultModelList[index]['type'],
+                    createdAt:
+                        getDateTime(fault.faultModelList[index]['createdAt']),
+                    status: fault.faultModelList[index]['status'],
+                    description: fault.faultModelList[index]['description'],
+                    updatedAt:
+                        getDateTime(fault.faultModelList[index]['updatedAt']),
+                    onUpdate: () {
+                      Get.to(() => UpdateFault(
+                            address: widget.address,
+                            statusId: fault.faultModelList[index]['statusId']
+                                .toString(),
+                            description: fault.faultModelList[index]
+                                ['description'],
+                            statusName: fault.faultModelList[index]['status'],
+                            faultId:
+                                fault.faultModelList[index]['id'].toString(),
+                            token: widget.token,
+                            longitude: widget.long,
+                            latitude: widget.lat,
+                          ));
+                    },
+                  );
+                }),
           );
         }
-      })),
+      }),
     );
   }
 }

@@ -46,11 +46,11 @@ class Data {
 
   int? id;
   String? name;
-  dynamic phone;
+  String? phone;
   String? marketerId;
-  String? email;
-  String? address;
-  String? avatar;
+  dynamic email;
+  dynamic address;
+  dynamic avatar;
   String? profileUpdateStatus;
   AreaOffice? areaOffice;
 
@@ -91,22 +91,22 @@ class AreaOffice {
   int? id;
   String? name;
   dynamic deletedAt;
-  DateTime? createdAt;
-  DateTime? updatedAt;
+  String? createdAt;
+  String? updatedAt;
 
   factory AreaOffice.fromJson(Map<String, dynamic> json) => AreaOffice(
         id: json["id"],
         name: json["name"],
         deletedAt: json["deleted_at"],
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        createdAt: json["created_at"],
+        updatedAt: json["updated_at"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
         "deleted_at": deletedAt,
-        "created_at": createdAt!.toIso8601String(),
-        "updated_at": updatedAt!.toIso8601String(),
+        "created_at": createdAt,
+        "updated_at": updatedAt,
       };
 }

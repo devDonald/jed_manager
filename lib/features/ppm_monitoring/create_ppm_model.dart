@@ -10,18 +10,18 @@ CreatePpmModel createPpmModelFromJson(String str) =>
 String createPpmModelToJson(CreatePpmModel data) => json.encode(data.toJson());
 
 class CreatePpmModel {
-  CreatePpmModel({
-    this.dtId,
-    this.feederId,
-    this.meterSerialNumber,
-    this.phone,
-    this.address,
-    this.band,
-    this.longitude,
-    this.latitude,
-    this.lastVendingDate,
-    this.statusId,
-  });
+  CreatePpmModel(
+      {this.dtId,
+      this.feederId,
+      this.meterSerialNumber,
+      this.phone,
+      this.address,
+      this.band,
+      this.longitude,
+      this.latitude,
+      this.lastVendingDate,
+      this.statusId,
+      this.resolvedAddress});
 
   int? dtId;
   int? feederId, statusId;
@@ -31,18 +31,21 @@ class CreatePpmModel {
   String? band;
   String? longitude;
   String? latitude;
+  String? resolvedAddress;
 
   factory CreatePpmModel.fromJson(Map<String, dynamic> json) => CreatePpmModel(
-      dtId: json["dt_id"],
-      feederId: json["feeder_id"],
-      meterSerialNumber: json["meter_serial_number"],
-      phone: json["phone"],
-      address: json["address"],
-      band: json["band"],
-      longitude: json["longitude"],
-      latitude: json["latitude"],
-      statusId: json["status_id"],
-      lastVendingDate: json["last_date_of_vending"]);
+        dtId: json["dt_id"],
+        feederId: json["feeder_id"],
+        meterSerialNumber: json["meter_serial_number"],
+        phone: json["phone"],
+        address: json["address"],
+        band: json["band"],
+        longitude: json["longitude"],
+        latitude: json["latitude"],
+        statusId: json["status_id"],
+        lastVendingDate: json["last_date_of_vending"],
+        resolvedAddress: json["resolved_address"],
+      );
 
   Map<String, dynamic> toJson() => {
         "dt_id": dtId,
@@ -55,6 +58,7 @@ class CreatePpmModel {
         "longitude": longitude,
         "latitude": latitude,
         "status_id": statusId,
-        "last_date_of_vending": lastVendingDate
+        "last_date_of_vending": lastVendingDate,
+        "resolved_address": resolvedAddress,
       };
 }

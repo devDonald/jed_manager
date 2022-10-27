@@ -16,12 +16,14 @@ class UpdateBillModel {
     this.amount,
     this.longitude,
     this.latitude,
+    this.resolvedAddress,
   });
 
   int? statusId;
   int? amount;
   String? longitude;
   String? latitude;
+  String? resolvedAddress;
 
   factory UpdateBillModel.fromJson(Map<String, dynamic> json) =>
       UpdateBillModel(
@@ -29,6 +31,7 @@ class UpdateBillModel {
         amount: json["amount"],
         longitude: json["longitude"],
         latitude: json["latitude"],
+        resolvedAddress: json["resolved_address"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -36,5 +39,6 @@ class UpdateBillModel {
         "amount": amount,
         "longitude": longitude,
         "latitude": latitude,
+        "resolved_address": resolvedAddress,
       };
 }

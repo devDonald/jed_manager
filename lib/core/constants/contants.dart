@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:jedmgr/core/themes/theme_colors.dart';
 
 import '../themes/theme.dart';
 
@@ -17,7 +18,7 @@ const adminId = 'LNXzA3WdsrNuXs4PBNLiiBQkypF2';
 successToastMessage({required String msg}) {
   Fluttertoast.showToast(
       msg: msg,
-      toastLength: Toast.LENGTH_LONG,
+      toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.CENTER,
       timeInSecForIosWeb: 1,
       backgroundColor: Colors.green,
@@ -292,12 +293,22 @@ String getTimestamp(String date) {
   return msg;
 }
 
-String getDateTime(String date) {
-  var dt = DateTime.parse(date).toLocal();
+String? getDateTime(String? date) {
+  if (date == null) {
+    return null;
+  } else {
+    return DateFormat.yMMMMEEEEd()
+        .format(DateTime.parse(date).toLocal())
+        .toString();
+  }
+}
 
-  return DateFormat.yMMMMEEEEd()
-      .format(DateTime.parse(date).toLocal())
-      .toString();
+String? getTime(String? date) {
+  if (date == null) {
+    return null;
+  } else {
+    return DateFormat.jm().format(DateTime.parse(date).toLocal()).toString();
+  }
 }
 
 dynamic fromDateTimeToJson(DateTime date) {
@@ -334,17 +345,20 @@ Future download2(Dio dio, String url, String savePath) async {
   }
 }
 
-// Future<void> onOpen(LinkableElement link) async {
-//   if (await canLaunch(link.url)) {
-//     await launch(link.url);
-//   } else {
-//     throw 'Could not launch $link';
-//   }
-// }
-
-const style = TextStyle(
-  color: Colors.red,
-  fontSize: 16,
-  fontWeight: FontWeight.w500,
-  height: 1.375,
-);
+Color getStyleColor(String style) {
+  if (style == 'red') {
+    return ThemeColors.redColor;
+  } else if (style == 'green') {
+    return ThemeColors.greenColor;
+  } else if (style == 'ash') {
+    return ThemeColors.ashColor;
+  } else if (style == 'blue') {
+    return ThemeColors.blueColor;
+  } else if (style == 'orange') {
+    return ThemeColors.orangeColor;
+  } else if (style == 'yellow') {
+    return ThemeColors.yellowColor;
+  } else {
+    return ThemeColors.blueColor;
+  }
+}

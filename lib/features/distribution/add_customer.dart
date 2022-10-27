@@ -13,11 +13,12 @@ import 'controller/distribution_controller.dart';
 
 class AddDT extends StatefulWidget {
   static const String id = 'AddDT';
-  final String token, longitude, latitude;
+  final String token, longitude, latitude, address;
   const AddDT(
       {Key? key,
       required this.token,
       required this.longitude,
+      required this.address,
       required this.latitude})
       : super(key: key);
 
@@ -51,15 +52,15 @@ class _AddDTState extends State<AddDT> {
 
   Future<void> getFeeder() async {
     _feederSearch =
-        await FeederServices.getFeeder('marketer/getAllFeeders', widget.token);
-    _areaSearch = await FeederServices.getAreaOffice(
+        await HelperServices.getFeeder('marketer/getAllFeeders', widget.token);
+    _areaSearch = await HelperServices.getAreaOffice(
         'marketer/getAllAreaOffices', widget.token);
     _statusSearch =
-        await FeederServices.getStatus('marketer/getAllStatuses', widget.token);
+        await HelperServices.getStatus('marketer/getAllStatuses', widget.token);
   }
 
   Future<void> getDT() async {
-    _dtSearch = await FeederServices.getDT(
+    _dtSearch = await HelperServices.getDT(
         'marketer/getFeederDts', widget.token, feederId);
   }
 
@@ -393,6 +394,7 @@ class _AddDTState extends State<AddDT> {
                         _band.text,
                         _paymentAmount.text)) {
                       NewCustomerModel model = NewCustomerModel(
+                        resolvedAddress: widget.address,
                         accountNumber: _account_no.text,
                         address: _address.text,
                         areaOfficeId: areaId,

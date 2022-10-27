@@ -34,53 +34,45 @@ class DistributionController extends GetxController {
 
   void createAccount(NewCustomerModel model, String token) {
     CustomFullScreenDialog.showDialog();
-    try {
-      isLoading(true);
-      NetworkHandler.postRequest(
-              newCustomerModelToJson(model), "marketer/createBillRecord", token)
-          .then((response) {
-        print("response ${response.statusCode}");
-        print("responsebody ${response.body}");
-        if (response.statusCode == 201) {
-          isFound(true);
-          successToastMessage(msg: 'Customer created successfully.');
-          Get.back();
-        } else {
-          errorToastMessage(msg: 'please try again with valid data');
-        }
-      });
-    } finally {
-      CustomFullScreenDialog.cancelDialog();
+    isLoading(true);
+    NetworkHandler.postRequest(
+            newCustomerModelToJson(model), "marketer/createBillRecord", token)
+        .then((response) {
       isLoading(false);
-    }
+      print("response ${response.statusCode}");
+      print("responsebody ${response.body}");
+      if (response.statusCode == 201) {
+        isFound(true);
+        successToastMessage(msg: 'Customer created successfully.');
+        Get.back();
+      } else {
+        errorToastMessage(msg: 'please try again with valid data');
+      }
+    });
   }
 
-  void updateAccount(
-      UpdateCustomerModel model, String token, String customerId) {
-    print(model);
-    try {
-      isLoading(true);
-      CustomFullScreenDialog.showDialog();
+  void updateAccount(UpdateCustomerModel model, String token, String customerId,
+      String billId) {
+    isLoading(true);
+    CustomFullScreenDialog.showDialog();
 
-      NetworkHandler.postRequest(updateCustomerModelToJson(model),
-              "marketer/updateCustomer/$customerId", token)
-          .then((response) {
-        CustomFullScreenDialog.cancelDialog();
-        print("response update ${response.statusCode}");
-        print("response update ${response.body}");
-
-        if (response.statusCode == 200) {
-          isFound(true);
-          successToastMessage(msg: 'Customer record successfully updated');
-        } else {
-          errorToastMessage(msg: 'Invalid data provided, please try again');
-          isFound(false);
-        }
-      });
-    } finally {
+    NetworkHandler.postRequest(updateCustomerModelToJson(model),
+            "marketer/updateCustomer/$customerId/bill/$billId", token)
+        .then((response) {
       CustomFullScreenDialog.cancelDialog();
-      isLoading(false);
-    }
+      print("response update ${response.statusCode}");
+      print("response update ${response.body}");
+
+      if (response.statusCode == 200) {
+        isFound(true);
+        successToastMessage(msg: 'Customer bill successfully updated');
+        update();
+        Get.back();
+      } else {
+        errorToastMessage(msg: 'Invalid data provided, please try again');
+        isFound(false);
+      }
+    });
   }
 
   void updateBill(UpdateBillModel model, String token, String customerId) {
@@ -99,7 +91,9 @@ class DistributionController extends GetxController {
 
       if (response.statusCode == 200) {
         isFound(true);
-        successToastMessage(msg: 'Customer record successfully updated');
+        successToastMessage(msg: 'Bill successfully updated');
+        update();
+        Get.back();
       } else {
         errorToastMessage(msg: 'Invalid data provided, please try again');
         isFound(false);

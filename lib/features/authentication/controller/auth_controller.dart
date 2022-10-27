@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:jedmgr/core/constants/contants.dart';
 import 'package:jedmgr/core/services/network_handler.dart';
 import 'package:jedmgr/features/authentication/marketer/login_screen.dart';
+import 'package:jedmgr/features/authentication/model/login_error_model.dart';
 import 'package:jedmgr/features/authentication/model/marketer_auth_model.dart';
 import 'package:jedmgr/features/authentication/model/marketer_auth_response.dart';
 import 'package:jedmgr/features/authentication/model/marketer_logout_model.dart';
@@ -18,8 +19,11 @@ class AuthController extends GetxController {
 
   void loginMarketer(MarketerAuthModel model) {
     CustomFullScreenDialog.showDialog();
-    NetworkHandler.post(authModelToJson(model), "login").then((response) {
-      print('Response: ${response.body}');
+    NetworkHandler.post(marketerAuthModelToJson(model), "login")
+        .then((response) {
+      print('Response Login: ${response.body}');
+      print('Login Status: ${response.statusCode}');
+
       if (response.statusCode == 200) {
         print('Response: ${response.body}');
         CustomFullScreenDialog.cancelDialog();
@@ -30,46 +34,50 @@ class AuthController extends GetxController {
         Get.offAll(() => HomeScreen(
               lat: "${model.latitude}",
               long: "${model.longitude}",
+              address: "${model.resolvedAddress}",
               name: authResultModel.data!.name!,
               token: authResultModel.token!,
             ));
       } else {
         CustomFullScreenDialog.cancelDialog();
-        errorToastMessage(msg: response.body);
+        LoginErrorModel errorModel = loginErrorModelFromJson(response.body);
+        errorToastMessage(msg: errorModel.message!);
       }
     });
   }
 
-  Future<void> marketerLogout(String lat, String long, String token) async {
+  Future<void> marketerLogout(
+      String lat, String long, address, String token) async {
     CustomFullScreenDialog.showDialog();
-    MarketerLogoutModel model =
-        MarketerLogoutModel(longitude: long, latitude: lat);
+    MarketerLogoutModel model = MarketerLogoutModel(
+        longitude: long, latitude: lat, resolvedAddress: address);
     NetworkHandler.postRequest(
             marketerLogoutModelToJson(model), "marketer/marketerLogout", token)
         .then((response) {
+      print("marklogout ${response.body}");
+
       CustomFullScreenDialog.cancelDialog();
       if (response.statusCode == 200) {
-        print('Response: ${response.body}');
-        successToastMessage(msg: 'Logout successfully');
+        LoginErrorModel errorModel = loginErrorModelFromJson(response.body);
+        successToastMessage(msg: errorModel.message!);
         Get.offAll(() => const MarketerLoginScreen());
       }
     });
   }
 
-  Future<void> technicianLogout(String lat, String long, String token) async {
+  Future<void> technicianLogout(
+      String lat, String long, String address, String token) async {
     CustomFullScreenDialog.showDialog();
-    MarketerLogoutModel model =
-        MarketerLogoutModel(longitude: long, latitude: lat);
+    MarketerLogoutModel model = MarketerLogoutModel(
+        longitude: long, latitude: lat, resolvedAddress: address);
     NetworkHandler.postRequest(marketerLogoutModelToJson(model),
             "technician/technicianLogout", token)
         .then((response) {
+      print("techlogout ${response.body}");
       CustomFullScreenDialog.cancelDialog();
       if (response.statusCode == 200) {
-        print('Response: ${response.body}');
-        AuthResultModel authResultModel =
-            authResultModelFromJson(response.body);
-        NetworkHandler.storeToken(authResultModel.token!);
-        successToastMessage(msg: 'Logout successfully');
+        LoginErrorModel errorModel = loginErrorModelFromJson(response.body);
+        successToastMessage(msg: errorModel.message!);
         Get.offAll(() => const TechnicianLoginScreen());
       }
     });
@@ -92,10 +100,12 @@ class AuthController extends GetxController {
               long: "${model.longitude}",
               name: authResultModel.data!.name!,
               token: authResultModel.token!,
+              address: "${model.resolvedAddress}",
             ));
       } else {
         CustomFullScreenDialog.cancelDialog();
-        errorToastMessage(msg: response.body);
+        LoginErrorModel errorModel = loginErrorModelFromJson(response.body);
+        errorToastMessage(msg: errorModel.message!);
       }
     });
   }

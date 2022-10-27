@@ -3,22 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:jedmgr/features/engineer/technician_faults.dart';
+import 'package:jedmgr/features/fault_reporting/controller/fault_controller.dart';
 import 'package:jedmgr/features/home/fault_reporting.dart';
 
 import '../../core/constants/contants.dart';
 import '../../core/themes/theme_colors.dart';
 import '../../core/themes/theme_text.dart';
+import '../../core/widgets/exit_popup_widget.dart';
+import '../activity_log/marketer_log_home.dart';
 import '../authentication/controller/auth_controller.dart';
 
 class EngineerHome extends StatefulWidget {
   final String lat, long;
-  final String name, token;
+  final String name, token, address;
   const EngineerHome({
     Key? key,
     required this.lat,
     required this.long,
     required this.name,
     required this.token,
+    required this.address,
   }) : super(key: key);
 
   @override
@@ -27,99 +31,98 @@ class EngineerHome extends StatefulWidget {
 
 class _EngineerHomeState extends State<EngineerHome> {
   AuthController auth = AuthController.to;
+  FaultController fault = FaultController.to;
+  DateTime _focusedDay = DateTime.now();
+
+  @override
+  void initState() {
+    fault.displayFaults(widget.token);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     dynamic currentTime = DateFormat.jm().format(DateTime.now());
-    return Scaffold(
-      appBar: myAppBar(context, currentTime),
-      body: Container(
-        padding: const EdgeInsets.all(9),
-        margin: const EdgeInsets.only(
-          left: 15.0,
-          right: 15.0,
-          top: 80,
-        ),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: ThemeColors.whiteColor,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              blurRadius: 8.0,
-              offset: Offset(
-                0.0,
-                4.0,
-              ),
-              color: ThemeColors.shadowColor,
-            )
-          ],
-        ),
-        child: const Text(
-          'What Activity do you want to Perform today?',
-          style: TextStyle(
-            color: ThemeColors.blackColor1,
-            fontWeight: JanguAskFontWeight.kBoldText,
-            fontSize: 15,
+    return WillPopScope(
+      onWillPop: () => showExitPopup(context),
+      child: Scaffold(
+        appBar: myAppBar(context, currentTime),
+        body: Container(
+          padding: const EdgeInsets.all(9),
+          margin: const EdgeInsets.only(
+            left: 15.0,
+            right: 15.0,
+            top: 80,
           ),
-        ),
-      ),
-      bottomSheet: Container(
-        padding: const EdgeInsets.all(9),
-        margin: const EdgeInsets.only(
-          left: 15.0,
-          right: 15.0,
-          top: 15,
-        ),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: ThemeColors.whiteColor,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              blurRadius: 8.0,
-              offset: Offset(
-                0.0,
-                4.0,
-              ),
-              color: ThemeColors.shadowColor,
-            )
-          ],
-        ),
-        child: GridView(
-          padding: const EdgeInsets.all(10),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          primary: false,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 0.85,
-              crossAxisCount: 2),
-          children: [
-            HomeCard(
-              icon: 'images/fault1.png',
-              title: 'My Assigned Faults',
-              onTap: () {
-                Get.to(() => TechnicianFaults(
-                      token: widget.token,
-                      long: widget.long,
-                      lat: widget.lat,
-                    ));
-              },
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: ThemeColors.whiteColor,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: const [
+              BoxShadow(
+                blurRadius: 8.0,
+                offset: Offset(
+                  0.0,
+                  4.0,
+                ),
+                color: ThemeColors.shadowColor,
+              )
+            ],
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GridView(
+                  padding: const EdgeInsets.all(10),
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  primary: false,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 0.8,
+                      crossAxisCount: 2),
+                  children: [
+                    HomeCard(
+                      icon: 'images/fault1.png',
+                      title: 'Assigned Faults',
+                      onTap: () {
+                        Get.to(() => TechnicianFaults(
+                              address: widget.address,
+                              token: widget.token,
+                              long: widget.long,
+                              lat: widget.lat,
+                            ));
+                      },
+                    ),
+                    HomeCard(
+                      icon: 'images/faults2.jpeg',
+                      title: 'Fault Reporting',
+                      onTap: () async {
+                        Get.to(() => FaultReporting(
+                              address: widget.address,
+                              token: widget.token,
+                              latitude: widget.lat,
+                              longitude: widget.long,
+                            ));
+                      },
+                    ),
+                    HomeCard(
+                      icon: 'images/activity.jpeg',
+                      title: 'My Activity Log',
+                      onTap: () async {
+                        Get.to(() => MarketerHomeLog(
+                            token: widget.token,
+                            date:
+                                "${_focusedDay.year}-${_focusedDay.month}-${_focusedDay.day}"));
+                      },
+                    ),
+                  ],
+                )
+              ],
             ),
-            HomeCard(
-              icon: 'images/faults2.jpeg',
-              title: 'Fault Reporting',
-              onTap: () async {
-                Get.to(() => FaultReporting(
-                      token: widget.token,
-                      latitude: widget.lat,
-                      longitude: widget.long,
-                    ));
-              },
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -136,7 +139,8 @@ class _EngineerHomeState extends State<EngineerHome> {
         padding: const EdgeInsets.only(top: 20.0, left: 10),
         child: GestureDetector(
           onTap: () {
-            auth.marketerLogout(widget.lat, widget.long, widget.token);
+            auth.technicianLogout(
+                widget.lat, widget.long, widget.address, widget.token);
           },
           child: const CircleAvatar(
               child: Icon(

@@ -24,7 +24,7 @@ class JedText extends StatelessWidget {
           ),
           children: <TextSpan>[
             TextSpan(
-              text: 'MGR',
+              text: 'BAT',
               style: TextStyle(
                 color: ThemeColors.primaryColor,
                 fontSize: (fontSize != null) ? fontSize : 15,

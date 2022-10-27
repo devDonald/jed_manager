@@ -92,12 +92,14 @@ class _LogInAsState extends State<LogInAs> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     LogInAsButton(
+                      color: Colors.orange,
                       title: 'As a Marketer',
                       onTap: () {
                         Get.to(() => const MarketerLoginScreen());
                       },
                     ),
                     LogInAsButton(
+                        color: Colors.blue,
                         title: 'As an Engineer / Technician',
                         onTap: () {
                           Get.to(() => const TechnicianLoginScreen());
@@ -118,9 +120,11 @@ class LogInAsButton extends StatelessWidget {
     Key? key,
     this.title,
     this.onTap,
+    required this.color,
   }) : super(key: key);
   final String? title;
   final Function()? onTap;
+  final Color color;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -134,7 +138,7 @@ class LogInAsButton extends StatelessWidget {
           bottom: 16.0,
         ),
         decoration: BoxDecoration(
-          color: ThemeColors.primaryColor,
+          color: color,
           borderRadius: BorderRadius.circular(
             10.0,
           ),
@@ -142,18 +146,12 @@ class LogInAsButton extends StatelessWidget {
             BoxShadow(
               offset: const Offset(0.0, 5.0),
               blurRadius: 15.0,
-              color: ThemeColors.primaryColor.withOpacity(0.5),
+              color: color.withOpacity(0.5),
             ),
           ],
         ),
         child: Stack(
           children: [
-            Positioned(
-              left: 1,
-              right: 1,
-              bottom: -30,
-              child: SvgPicture.asset('images/buttonDesign.svg'),
-            ),
             Center(
               child: Text(
                 title!,

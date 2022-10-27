@@ -2,50 +2,60 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:jedmgr/features/cash_drive/cash_drive_model.dart';
+import 'package:jedmgr/features/fault_reporting/controller/fault_controller.dart';
+import 'package:jedmgr/features/fault_reporting/update_fault_model.dart';
 
 import '../../../core/themes/theme_colors.dart';
 import '../../../core/widgets/primary_button.dart';
-import '../distribution/controller/distribution_controller.dart';
 import '../feeders/services/feeder_services.dart';
 
-class UpdateBill extends StatefulWidget {
-  final String token, longitude, latitude, statusName, statusId, billId;
+class UpdateFault extends StatefulWidget {
+  final String token,
+      longitude,
+      latitude,
+      statusName,
+      statusId,
+      address,
+      faultId,
+      description;
 
-  static const String id = 'UpdateInfo';
-  const UpdateBill({
+  static const String id = 'UpdateFault';
+  const UpdateFault({
     Key? key,
     required this.token,
-    required this.billId,
+    required this.faultId,
     required this.longitude,
     required this.latitude,
     required this.statusName,
     required this.statusId,
+    required this.description,
+    required this.address,
   }) : super(key: key);
 
   @override
-  _UpdateBillState createState() => _UpdateBillState();
+  _UpdateFaultState createState() => _UpdateFaultState();
 }
 
-class _UpdateBillState extends State<UpdateBill> {
-  DistributionController cont = DistributionController.to;
+class _UpdateFaultState extends State<UpdateFault> {
+  FaultController cont = FaultController.to;
 
   final _status = TextEditingController();
-  final _amount_paid = TextEditingController();
+  final _description = TextEditingController();
 
   List<Map> _statusSearch = [];
 
   String statusId = '1';
 
   Future<void> getFeeder() async {
-    _statusSearch = await FeederServices.getStatus(
-        'marketer/getAllBillsStatus', widget.token);
+    _statusSearch = await HelperServices.getStatus(
+        'marketer/getAllFaultStatus', widget.token);
   }
 
   @override
   void initState() {
     _status.text = widget.statusName;
     statusId = widget.statusId;
+    _description.text = widget.description;
 
     getFeeder();
     super.initState();
@@ -57,7 +67,7 @@ class _UpdateBillState extends State<UpdateBill> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         titleSpacing: -5,
-        title: const Text('Update Bill Record'),
+        title: const Text('Update Fault Status'),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -123,11 +133,13 @@ class _UpdateBillState extends State<UpdateBill> {
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: TextFormField(
-                  controller: _amount_paid,
-                  maxLength: 11,
-                  keyboardType: TextInputType.number,
+                  controller: _description,
+                  minLines: 2,
+                  maxLines: 5,
+                  textCapitalization: TextCapitalization.sentences,
+                  keyboardType: TextInputType.text,
                   decoration: const InputDecoration(
-                    hintText: 'Amount Paid',
+                    hintText: 'Description',
                     hintStyle: TextStyle(
                       color: ThemeColors.primaryGreyColor,
                       fontSize: 16,
@@ -140,13 +152,15 @@ class _UpdateBillState extends State<UpdateBill> {
                 alignment: Alignment.bottomRight,
                 child: PrimaryButton(
                   onTap: () async {
-                    if (_status.text != '' && _amount_paid.text != '') {
-                      UpdateBillModel model = UpdateBillModel(
+                    if (_status.text != '' && _description.text != '') {
+                      UpdateFaultModel model = UpdateFaultModel(
+                          resolvedAddress: widget.address,
                           statusId: int.parse(statusId),
-                          amount: int.parse(_amount_paid.text),
+                          description: _description.text,
                           longitude: widget.longitude,
                           latitude: widget.latitude);
-                      cont.updateBill(model, widget.token, widget.billId);
+                      cont.updateFaultStatus(
+                          model, widget.token, widget.faultId);
                     }
                   },
                   buttonTitle: 'Update Record',

@@ -27,6 +27,7 @@ class NewCustomerModel {
     this.lastPaymentAmount,
     this.longitude,
     this.latitude,
+    this.resolvedAddress,
   });
 
   String? accountNumber;
@@ -44,6 +45,7 @@ class NewCustomerModel {
   int? lastPaymentAmount;
   String? longitude;
   String? latitude;
+  String? resolvedAddress;
 
   factory NewCustomerModel.fromJson(Map<String, dynamic> json) =>
       NewCustomerModel(
@@ -62,6 +64,7 @@ class NewCustomerModel {
         lastPaymentAmount: json["last_payment_amount"],
         longitude: json["longitude"],
         latitude: json["latitude"],
+        resolvedAddress: json["resolved_address"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -80,5 +83,6 @@ class NewCustomerModel {
         "last_payment_amount": lastPaymentAmount,
         "longitude": longitude,
         "latitude": latitude,
+        "resolved_address": resolvedAddress,
       };
 }

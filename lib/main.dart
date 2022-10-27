@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:jedmgr/features/activity_log/controller/activity_controller.dart';
 import 'package:jedmgr/features/distribution/controller/distribution_controller.dart';
 import 'package:jedmgr/features/fault_reporting/controller/fault_controller.dart';
 import 'package:new_version/new_version.dart';
@@ -16,7 +17,7 @@ Future<void> main() async {
   Get.put<AuthController>(AuthController());
   Get.put<DistributionController>(DistributionController());
   Get.put<FaultController>(FaultController());
-
+  Get.put<ActivityController>(ActivityController());
   runApp(const MyApp());
 }
 
@@ -46,7 +47,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: "Jed Mgr",
+      title: "JedBat",
       initialRoute: '/',
       getPages: AppRoutes.routes,
       debugShowCheckedModeBanner: false,

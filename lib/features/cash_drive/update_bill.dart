@@ -10,7 +10,13 @@ import '../distribution/controller/distribution_controller.dart';
 import '../feeders/services/feeder_services.dart';
 
 class UpdateBill extends StatefulWidget {
-  final String token, longitude, latitude, statusName, statusId, billId;
+  final String token,
+      longitude,
+      latitude,
+      statusName,
+      statusId,
+      billId,
+      mapAddress;
 
   static const String id = 'UpdateInfo';
   const UpdateBill({
@@ -21,6 +27,7 @@ class UpdateBill extends StatefulWidget {
     required this.latitude,
     required this.statusName,
     required this.statusId,
+    required this.mapAddress,
   }) : super(key: key);
 
   @override
@@ -38,14 +45,15 @@ class _UpdateBillState extends State<UpdateBill> {
   String statusId = '1';
 
   Future<void> getFeeder() async {
-    _statusSearch =
-        await FeederServices.getStatus('marketer/getAllStatuses', widget.token);
+    _statusSearch = await HelperServices.getStatus(
+        'marketer/getAllBillsStatus', widget.token);
   }
 
   @override
   void initState() {
     _status.text = widget.statusName;
     statusId = widget.statusId;
+    _amount_paid.text = '0';
 
     getFeeder();
     super.initState();
@@ -114,34 +122,38 @@ class _UpdateBillState extends State<UpdateBill> {
                   },
                   onSuggestionSelected: (dynamic suggestion) {
                     // This when someone click the items
-                    _status.text = '${suggestion['name']}';
-                    statusId = '${suggestion['id']}';
+                    setState(() {
+                      _status.text = '${suggestion['name']}';
+                      statusId = '${suggestion['id']}';
+                    });
                   },
                 ),
               ),
               const SizedBox(height: 30),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextFormField(
-                  controller: _amount_paid,
-                  maxLength: 11,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: 'Amount Paid',
-                    hintStyle: TextStyle(
-                      color: ThemeColors.primaryGreyColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ),
+              _status.text == "About to Pay"
+                  ? Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: TextFormField(
+                        controller: _amount_paid,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          hintText: 'Amount Paid',
+                          hintStyle: TextStyle(
+                            color: ThemeColors.primaryGreyColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(),
               const SizedBox(height: 30),
               Align(
                 alignment: Alignment.bottomRight,
                 child: PrimaryButton(
                   onTap: () async {
-                    if (_status.text != '' && _amount_paid.text != '') {
+                    if (_status.text != '') {
                       UpdateBillModel model = UpdateBillModel(
+                          resolvedAddress: widget.mapAddress,
                           statusId: int.parse(statusId),
                           amount: int.parse(_amount_paid.text),
                           longitude: widget.longitude,

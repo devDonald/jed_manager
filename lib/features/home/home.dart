@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:jedmgr/core/constants/contants.dart';
+import 'package:jedmgr/features/activity_log/marketer_log_home.dart';
 import 'package:jedmgr/features/authentication/controller/auth_controller.dart';
 import 'package:jedmgr/features/cash_drive/cash_drive_search.dart';
 import 'package:jedmgr/features/distribution/search_bill.dart';
@@ -11,16 +12,18 @@ import 'package:jedmgr/features/ppm_monitoring/create_ppm.dart';
 
 import '../../core/themes/theme_colors.dart';
 import '../../core/themes/theme_text.dart';
+import '../../core/widgets/exit_popup_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   final String lat, long;
-  final String name, token;
+  final String name, token, address;
   const HomeScreen({
     Key? key,
     required this.lat,
     required this.long,
     required this.name,
     required this.token,
+    required this.address,
   }) : super(key: key);
 
   @override
@@ -29,121 +32,181 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   AuthController auth = AuthController.to;
+  DateTime _focusedDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
     dynamic currentTime = DateFormat.jm().format(DateTime.now());
-    return Scaffold(
-      appBar: myAppBar(context, currentTime),
-      body: Container(
-        padding: const EdgeInsets.all(9),
-        margin: const EdgeInsets.only(
-          left: 15.0,
-          right: 15.0,
-          top: 80,
-        ),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: ThemeColors.whiteColor,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              blurRadius: 8.0,
-              offset: Offset(
-                0.0,
-                4.0,
+    return WillPopScope(
+      onWillPop: () => showExitPopup(context),
+      child: Scaffold(
+        appBar: myAppBar(context, currentTime),
+        body: Container(
+          padding: const EdgeInsets.all(9),
+          margin: const EdgeInsets.only(
+            left: 15.0,
+            right: 15.0,
+            top: 20,
+          ),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: ThemeColors.whiteColor,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: const [
+              BoxShadow(
+                blurRadius: 8.0,
+                offset: Offset(
+                  0.0,
+                  4.0,
+                ),
+                color: ThemeColors.shadowColor,
+              )
+            ],
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            physics: const ScrollPhysics(),
+            children: [
+              Container(
+                margin: const EdgeInsets.only(
+                    top: 5.0, bottom: 5.0, left: 5.0, right: 5.0),
+                //padding: EdgeInsets.only(left: 15.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.0),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      offset: Offset(0.0, 2.5),
+                      blurRadius: 10.5,
+                    ),
+                  ],
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    Get.to(() => MarketerHomeLog(
+                        token: widget.token,
+                        date:
+                            "${_focusedDay.year}-${_focusedDay.month}-${_focusedDay.day}"));
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const <Widget>[
+                      Icon(
+                        Icons.history,
+                        size: 40,
+                      ),
+                      Text(
+                        "My Activity Log",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      )
+                    ],
+                  ),
+                ),
               ),
-              color: ThemeColors.shadowColor,
-            )
-          ],
-        ),
-        child: const Text(
-          'What Activity do you want to Perform today?',
-          style: TextStyle(
-            color: ThemeColors.blackColor1,
-            fontWeight: JanguAskFontWeight.kBoldText,
-            fontSize: 15,
+              const SizedBox(
+                height: 10,
+              ),
+              const Text(
+                'What Activity do you want to Perform today?',
+                style: TextStyle(
+                  color: ThemeColors.blackColor1,
+                  fontWeight: JanguAskFontWeight.kBoldText,
+                  fontSize: 15,
+                ),
+              )
+            ],
           ),
         ),
-      ),
-      bottomSheet: Container(
-        padding: const EdgeInsets.all(9),
-        margin: const EdgeInsets.only(
-          left: 15.0,
-          right: 15.0,
-          top: 15,
-        ),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: ThemeColors.whiteColor,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
-            BoxShadow(
-              blurRadius: 8.0,
-              offset: Offset(
-                0.0,
-                4.0,
+        bottomSheet: Container(
+          padding: const EdgeInsets.all(9),
+          margin: const EdgeInsets.only(
+            left: 15.0,
+            right: 15.0,
+            top: 15,
+          ),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: ThemeColors.whiteColor,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: const [
+              BoxShadow(
+                blurRadius: 8.0,
+                offset: Offset(
+                  0.0,
+                  4.0,
+                ),
+                color: ThemeColors.shadowColor,
+              )
+            ],
+          ),
+          child: GridView(
+            padding: const EdgeInsets.all(10),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            primary: false,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 0.85,
+                crossAxisCount: 2),
+            children: [
+              HomeCard(
+                icon: 'images/bill.png',
+                title: 'Bill Distribution',
+                onTap: () {
+                  Get.to(() => BillsDistribution(
+                        address: widget.address,
+                        token: widget.token,
+                        latitude: widget.lat,
+                        longitude: widget.long,
+                      ));
+                },
               ),
-              color: ThemeColors.shadowColor,
-            )
-          ],
-        ),
-        child: GridView(
-          padding: const EdgeInsets.all(10),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          primary: false,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 0.85,
-              crossAxisCount: 2),
-          children: [
-            HomeCard(
-              icon: 'images/bill.png',
-              title: 'Bill Distribution',
-              onTap: () {
-                Get.to(() => BillsDistribution(
-                      token: widget.token,
-                      latitude: widget.lat,
-                      longitude: widget.long,
-                    ));
-              },
-            ),
-            HomeCard(
-              icon: 'images/cash.png',
-              title: 'Cash Drive',
-              onTap: () {
-                Get.to(() => CashDriveSearch(
-                      token: widget.token,
-                      latitude: widget.lat,
-                      longitude: widget.long,
-                    ));
-              },
-            ),
-            HomeCard(
-              icon: 'images/monitoring.png',
-              title: 'PPM Monitoring',
-              onTap: () async {
-                Get.to(() => CreatePPM(
-                      token: widget.token,
-                      latitude: widget.lat,
-                      longitude: widget.long,
-                    ));
-              },
-            ),
-            HomeCard(
-              icon: 'images/fault.jpeg',
-              title: 'Fault Reporting',
-              onTap: () async {
-                Get.to(() => FaultReporting(
-                      token: widget.token,
-                      latitude: widget.lat,
-                      longitude: widget.long,
-                    ));
-              },
-            ),
-          ],
+              HomeCard(
+                icon: 'images/cash.png',
+                title: 'Cash Drive',
+                onTap: () {
+                  Get.to(() => CashDriveSearch(
+                        address: widget.address,
+                        token: widget.token,
+                        latitude: widget.lat,
+                        longitude: widget.long,
+                      ));
+                },
+              ),
+              HomeCard(
+                icon: 'images/monitoring.png',
+                title: 'PPM Monitoring',
+                onTap: () async {
+                  Get.to(() => CreatePPM(
+                        address: widget.address,
+                        token: widget.token,
+                        latitude: widget.lat,
+                        longitude: widget.long,
+                      ));
+                },
+              ),
+              HomeCard(
+                icon: 'images/fault.jpeg',
+                title: 'Fault Reporting',
+                onTap: () async {
+                  Get.to(() => FaultReporting(
+                        address: widget.address,
+                        token: widget.token,
+                        latitude: widget.lat,
+                        longitude: widget.long,
+                      ));
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -160,7 +223,12 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.only(top: 20.0, left: 10),
         child: GestureDetector(
           onTap: () {
-            auth.marketerLogout(widget.lat, widget.long, widget.token);
+            auth.marketerLogout(
+              widget.lat,
+              widget.long,
+              widget.address,
+              widget.token,
+            );
           },
           child: const CircleAvatar(
               child: Icon(

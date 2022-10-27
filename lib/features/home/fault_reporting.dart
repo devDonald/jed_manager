@@ -12,11 +12,12 @@ import '../../../core/widgets/primary_button.dart';
 
 class FaultReporting extends StatefulWidget {
   static const String id = 'FaultReporting';
-  final String token, longitude, latitude;
+  final String token, longitude, latitude, address;
   const FaultReporting(
       {Key? key,
       required this.token,
       required this.longitude,
+      required this.address,
       required this.latitude})
       : super(key: key);
 
@@ -34,24 +35,29 @@ class _FaultReportingState extends State<FaultReporting> {
   final _description = TextEditingController();
   final _address = TextEditingController();
   final _status = TextEditingController();
+  final _faultType = TextEditingController();
 
   List<Map> _feederSearch = [];
   List<Map> _dtSearch = [];
-  List<Map> _statusSearch = [];
+  List<Map> _faultSearch = [];
 
-  String feederId = '1', dtID = '1', statusId = '1', areaId = '1';
+  String feederId = '1',
+      dtID = '1',
+      statusId = '36',
+      areaId = '1',
+      faultId = '1';
 
   Future<void> getFeeder() async {
     _feederSearch =
-        await FeederServices.getFeeder('marketer/getAllFeeders', widget.token);
+        await HelperServices.getFeeder('marketer/getAllFeeders', widget.token);
 
-    _statusSearch =
-        await FeederServices.getStatus('marketer/getAllStatuses', widget.token);
+    _faultSearch = await HelperServices.getFaultTypes(
+        'marketer/getAllFaultyReportType', widget.token);
   }
 
-  Future<void> getDT() async {
-    _dtSearch = await FeederServices.getDT(
-        'marketer/getFeederDts', widget.token, feederId);
+  Future<void> getDT(String id) async {
+    _dtSearch =
+        await HelperServices.getDT('marketer/getFeederDts', widget.token, id);
   }
 
   @override
@@ -111,12 +117,12 @@ class _FaultReportingState extends State<FaultReporting> {
                   ),
                 ),
               ),
+              const SizedBox(height: 22.0),
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
                   keyboardType: TextInputType.phone,
                   controller: phone,
-                  maxLength: 11,
                   decoration: const InputDecoration(
                     hintText: "Phone Number",
                     hintStyle: TextStyle(
@@ -144,36 +150,19 @@ class _FaultReportingState extends State<FaultReporting> {
               const SizedBox(height: 22),
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: TextFormField(
-                  controller: _description,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: 4,
-                  minLines: 2,
-                  decoration: const InputDecoration(
-                    hintText: 'Description',
-                    hintStyle: TextStyle(
-                      color: ThemeColors.blackColor1,
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 22),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
                 child: TypeAheadField(
                   textFieldConfiguration: TextFieldConfiguration(
                     autofocus: false,
-                    controller: _status,
+                    controller: _faultType,
                     style: const TextStyle(
                       color: ThemeColors.blackColor1,
                       fontSize: 18.0,
                     ),
-                    decoration: const InputDecoration(hintText: 'Status'),
+                    decoration: const InputDecoration(hintText: 'Fault Type'),
                   ),
                   suggestionsCallback: (pattern) async {
                     // Here you can call http call
-                    return _statusSearch.where(
+                    return _faultSearch.where(
                       (doc) => jsonEncode(doc)
                           .toLowerCase()
                           .contains(pattern.toLowerCase()),
@@ -186,9 +175,26 @@ class _FaultReportingState extends State<FaultReporting> {
                   },
                   onSuggestionSelected: (dynamic suggestion) {
                     // This when someone click the items
-                    _status.text = '${suggestion['name']}';
-                    statusId = '${suggestion['id']}';
+                    _faultType.text = '${suggestion['name']}';
+                    faultId = '${suggestion['id']}';
                   },
+                ),
+              ),
+              const SizedBox(height: 22),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextFormField(
+                  controller: _description,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: 4,
+                  minLines: 2,
+                  decoration: const InputDecoration(
+                    hintText: 'Description',
+                    hintStyle: TextStyle(
+                      color: ThemeColors.blackColor1,
+                      fontSize: 18,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(
@@ -223,11 +229,9 @@ class _FaultReportingState extends State<FaultReporting> {
                     // This when someone click the items
                     feeder.text = '${suggestion['name']}';
                     feederId = '${suggestion['id']}';
-                    if (mounted) {
-                      setState(() {
-                        getDT();
-                      });
-                    }
+                    setState(() {
+                      getDT('${suggestion['id']}');
+                    });
                     print('feederId $feederId');
                   },
                 ),
@@ -272,9 +276,11 @@ class _FaultReportingState extends State<FaultReporting> {
                       if (validatePhoneDescription(
                           phone.text, _description.text)) {
                         FaultReportModel model = FaultReportModel(
+                          resolvedAddress: widget.address,
                           address: _address.text,
                           feederId: int.parse(feederId),
                           dtId: int.parse(dtID),
+                          faultTypeId: int.parse(faultId),
                           longitude: widget.longitude,
                           latitude: widget.latitude,
                           phone: phone.text,

@@ -18,6 +18,7 @@ class UpdateCustomerModel {
     this.receiverPhoneNumber,
     this.longitude,
     this.latitude,
+    this.resolvedAddress,
   });
 
   String? feederId;
@@ -25,6 +26,7 @@ class UpdateCustomerModel {
   int? dtId;
   String? receiverPhoneNumber;
   String? latitude, longitude;
+  String? resolvedAddress;
 
   factory UpdateCustomerModel.fromJson(Map<String, dynamic> json) =>
       UpdateCustomerModel(
@@ -34,6 +36,7 @@ class UpdateCustomerModel {
         dtId: json["dt_id"],
         longitude: json["longitude"],
         latitude: json["latitude"],
+        resolvedAddress: json["resolved_address"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -43,5 +46,6 @@ class UpdateCustomerModel {
         "longitude": longitude,
         "dt_id": dtId,
         "latitude": latitude,
+        "resolved_address": resolvedAddress,
       };
 }

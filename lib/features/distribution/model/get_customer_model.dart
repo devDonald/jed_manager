@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final getCustomerModel = getCustomerModelFromJson(jsonString);
+
 import 'dart:convert';
 
 GetCustomerModel getCustomerModelFromJson(String str) =>
@@ -47,14 +51,14 @@ class Data {
 
   int? id;
   String? name;
-  String? email;
+  dynamic email;
   String? address;
   String? accountNumber;
-  String? lastPaymentDate;
-  String? lastPaymentAmount;
-  String? phone;
+  dynamic lastPaymentDate;
+  dynamic lastPaymentAmount;
+  dynamic phone;
   String? band;
-  Feeder? feeder;
+  Dt? feeder;
   Dt? dt;
   Status? status;
   AreaOffice? areaOffice;
@@ -70,7 +74,7 @@ class Data {
         lastPaymentAmount: json["last_payment_amount"],
         phone: json["phone"],
         band: json["band"],
-        feeder: Feeder.fromJson(json["feeder"]),
+        feeder: Dt.fromJson(json["feeder"]),
         dt: Dt.fromJson(json["dt"]),
         status: Status.fromJson(json["status"]),
         areaOffice: AreaOffice.fromJson(json["area_office"]),
@@ -98,20 +102,18 @@ class Data {
 
 class AreaOffice {
   AreaOffice({
-    required this.id,
-    required this.name,
-    required this.deletedAt,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.style,
+    this.id,
+    this.name,
+    this.deletedAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
-  int id;
-  String name;
+  int? id;
+  String? name;
   dynamic deletedAt;
-  String createdAt;
-  String updatedAt;
-  String style;
+  dynamic createdAt;
+  dynamic updatedAt;
 
   factory AreaOffice.fromJson(Map<String, dynamic> json) => AreaOffice(
         id: json["id"],
@@ -119,7 +121,6 @@ class AreaOffice {
         deletedAt: json["deleted_at"],
         createdAt: json["created_at"],
         updatedAt: json["updated_at"],
-        style: json["style"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -128,104 +129,31 @@ class AreaOffice {
         "deleted_at": deletedAt,
         "created_at": createdAt,
         "updated_at": updatedAt,
-        "style": style,
-      };
-}
-
-class Status {
-  Status({
-    required this.id,
-    required this.name,
-    required this.deletedAt,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.style,
-  });
-
-  int id;
-  String name;
-  dynamic deletedAt;
-  String createdAt;
-  String updatedAt;
-  String style;
-
-  factory Status.fromJson(Map<String, dynamic> json) => Status(
-        id: json["id"],
-        name: json["name"],
-        deletedAt: json["deleted_at"],
-        createdAt: json["created_at"],
-        updatedAt: json["updated_at"],
-        style: json["style"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
-        "deleted_at": deletedAt,
-        "created_at": createdAt,
-        "updated_at": updatedAt,
-        "style": style,
-      };
-}
-
-class Feeder {
-  Feeder({
-    this.id,
-    this.deletedAt,
-    this.createdAt,
-    this.updatedAt,
-    this.name,
-    this.feederParentId,
-    this.statusId,
-  });
-
-  int? id;
-  dynamic deletedAt;
-  String? createdAt;
-  String? updatedAt;
-  String? name;
-  int? feederParentId;
-  int? statusId;
-
-  factory Feeder.fromJson(Map<String, dynamic> json) => Feeder(
-        id: json["id"],
-        deletedAt: json["deleted_at"],
-        createdAt: json["created_at"],
-        updatedAt: json["updated_at"],
-        name: json["name"],
-        feederParentId: json["feeder_parent_id"],
-        statusId: json["status_id"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "deleted_at": deletedAt,
-        "created_at": createdAt,
-        "updated_at": updatedAt,
-        "name": name,
-        "feeder_parent_id": feederParentId,
-        "status_id": statusId,
       };
 }
 
 class Dt {
   Dt({
-    required this.id,
-    required this.deletedAt,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.statusId,
-    required this.feederId,
-    required this.name,
-    required this.number,
+    this.id,
+    this.deletedAt,
+    this.createdAt,
+    this.updatedAt,
+    this.statusId,
+    this.feederId,
+    this.name,
+    this.number,
+    this.parentFeederId,
   });
 
-  int id;
-  dynamic deletedAt, createdAt, updatedAt;
-  int statusId;
-  int feederId;
-  String name;
-  String number;
+  int? id;
+  dynamic deletedAt;
+  dynamic createdAt;
+  dynamic updatedAt;
+  int? statusId;
+  int? feederId;
+  String? name;
+  String? number;
+  int? parentFeederId;
 
   factory Dt.fromJson(Map<String, dynamic> json) => Dt(
         id: json["id"],
@@ -236,6 +164,7 @@ class Dt {
         feederId: json["feeder_id"],
         name: json["name"],
         number: json["number"],
+        parentFeederId: json["parent_feeder_id"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -247,6 +176,47 @@ class Dt {
         "feeder_id": feederId,
         "name": name,
         "number": number,
+        "parent_feeder_id": parentFeederId,
+      };
+}
+
+class Status {
+  Status({
+    this.createdAt,
+    this.updatedAt,
+    this.id,
+    this.name,
+    this.style,
+    this.color,
+    this.tag,
+  });
+
+  dynamic createdAt;
+  dynamic updatedAt;
+  int? id;
+  String? name;
+  String? style;
+  String? color;
+  String? tag;
+
+  factory Status.fromJson(Map<String, dynamic> json) => Status(
+        createdAt: json["created_at"],
+        updatedAt: json["updated_at"],
+        id: json["id"],
+        name: json["name"],
+        style: json["style"],
+        color: json["color"],
+        tag: json["tag"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "created_at": createdAt,
+        "updated_at": updatedAt,
+        "id": id,
+        "name": name,
+        "style": style,
+        "color": color,
+        "tag": tag,
       };
 }
 
@@ -261,25 +231,35 @@ class UnpaidBill {
     this.customerId,
     this.marketerId,
     this.receiverPhoneNumber,
+    this.description,
+    this.month,
+    this.year,
     this.latitude,
     this.longitude,
     this.amount,
     this.amountToPay,
+    this.resolvedAddress,
+    this.status,
   });
 
   int? id;
-  String? createdAt;
-  String? updatedAt;
+  dynamic createdAt;
+  dynamic updatedAt;
   dynamic deletedAt;
   dynamic name;
   int? statusId;
   int? customerId;
-  int? marketerId;
+  dynamic marketerId;
   String? receiverPhoneNumber;
+  dynamic description;
+  String? month;
+  String? year;
   String? latitude;
   String? longitude;
-  dynamic amount;
-  dynamic amountToPay;
+  String? amount;
+  String? amountToPay;
+  dynamic resolvedAddress;
+  Status? status;
 
   factory UnpaidBill.fromJson(Map<String, dynamic> json) => UnpaidBill(
         id: json["id"],
@@ -291,25 +271,35 @@ class UnpaidBill {
         customerId: json["customer_id"],
         marketerId: json["marketer_id"],
         receiverPhoneNumber: json["receiver_phone_number"],
+        description: json["description"],
+        month: json["month"],
+        year: json["year"],
         latitude: json["latitude"],
         longitude: json["longitude"],
         amount: json["amount"],
         amountToPay: json["amount_to_pay"],
+        resolvedAddress: json["resolved_address"],
+        status: Status.fromJson(json["status"]),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "created_at": createdAt,
-        "updated_at": updatedAt,
+        "created_at": createdAt.toIso8601String(),
+        "updated_at": updatedAt.toIso8601String(),
         "deleted_at": deletedAt,
         "name": name,
         "status_id": statusId,
         "customer_id": customerId,
         "marketer_id": marketerId,
         "receiver_phone_number": receiverPhoneNumber,
+        "description": description,
+        "month": month,
+        "year": year,
         "latitude": latitude,
         "longitude": longitude,
         "amount": amount,
         "amount_to_pay": amountToPay,
+        "resolved_address": resolvedAddress,
+        "status": status!.toJson(),
       };
 }

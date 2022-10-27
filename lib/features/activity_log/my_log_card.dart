@@ -1,34 +1,27 @@
 import 'package:flutter/material.dart';
 
-import '../../core/constants/contants.dart';
 import '../../core/themes/theme_colors.dart';
 import '../../core/themes/theme_text.dart';
 
-class MyFaultCard extends StatelessWidget {
-  const MyFaultCard(
-      {Key? key,
-      this.createdAt,
-      this.description,
-      this.updatedAt,
-      this.status,
-      this.faultType,
-      required this.color,
-      this.onUpdate})
-      : super(key: key);
-  final String? createdAt;
-  final String? description;
-  final String? updatedAt;
-  final String? status, faultType;
-  final String color;
-  final Function()? onUpdate;
+class MyLogCard extends StatelessWidget {
+  const MyLogCard({
+    Key? key,
+    this.activity,
+    this.time,
+    this.location,
+    this.date,
+  }) : super(key: key);
+  final String? activity;
+  final String? time;
+  final String? location, date;
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(9),
+      padding: const EdgeInsets.all(5),
       margin: const EdgeInsets.only(
-        left: 15.0,
-        right: 15.0,
-        top: 15,
+        left: 5.0,
+        right: 5.0,
+        top: 10,
       ),
       width: double.infinity,
       decoration: BoxDecoration(
@@ -49,7 +42,7 @@ class MyFaultCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Fault Type',
+            'Activity',
             style: TextStyle(
               color: ThemeColors.blackColor1,
               fontWeight: JanguAskFontWeight.kBoldText,
@@ -58,7 +51,7 @@ class MyFaultCard extends StatelessWidget {
           ),
           const SizedBox(height: 8.0),
           Text(
-            faultType ?? 'not specified',
+            activity ?? 'not specified',
             maxLines: 5,
             style: const TextStyle(
               color: ThemeColors.primaryGreyColor,
@@ -67,7 +60,8 @@ class MyFaultCard extends StatelessWidget {
           ),
           const SizedBox(height: 15.0),
           const Text(
-            'Description of Fault',
+            'Location',
+            maxLines: 5,
             style: TextStyle(
               color: ThemeColors.blackColor1,
               fontWeight: JanguAskFontWeight.kBoldText,
@@ -76,7 +70,7 @@ class MyFaultCard extends StatelessWidget {
           ),
           const SizedBox(height: 8.0),
           Text(
-            description ?? 'not specified',
+            location ?? 'not specified',
             maxLines: 5,
             style: const TextStyle(
               color: ThemeColors.primaryGreyColor,
@@ -85,7 +79,7 @@ class MyFaultCard extends StatelessWidget {
           ),
           const SizedBox(height: 15.0),
           const Text(
-            "Created At",
+            "Activity Date",
             style: TextStyle(
               color: ThemeColors.blackColor1,
               fontWeight: JanguAskFontWeight.kBoldText,
@@ -94,7 +88,7 @@ class MyFaultCard extends StatelessWidget {
           ),
           const SizedBox(height: 8.0),
           Text(
-            createdAt ?? 'not specified',
+            date ?? 'not specified',
             style: const TextStyle(
               color: ThemeColors.primaryGreyColor,
               fontSize: 17.0,
@@ -102,7 +96,7 @@ class MyFaultCard extends StatelessWidget {
           ),
           const SizedBox(height: 15.0),
           const Text(
-            'Updated At',
+            'Activity Time',
             style: TextStyle(
               color: ThemeColors.blackColor1,
               fontWeight: JanguAskFontWeight.kBoldText,
@@ -111,48 +105,13 @@ class MyFaultCard extends StatelessWidget {
           ),
           const SizedBox(height: 8.0),
           Text(
-            updatedAt ?? 'not specified',
+            time ?? 'not specified',
             maxLines: 4,
             style: const TextStyle(
               color: ThemeColors.primaryGreyColor,
               fontSize: 17.0,
             ),
           ),
-          const SizedBox(height: 8.0),
-          const Text(
-            'Status',
-            style: TextStyle(
-              color: ThemeColors.blackColor1,
-              fontWeight: JanguAskFontWeight.kBoldText,
-              fontSize: 17,
-            ),
-          ),
-          const SizedBox(height: 8.0),
-          Container(
-            color: getStyleColor(color),
-            padding: const EdgeInsets.all(8),
-            child: Text(
-              status ?? 'not specified',
-              style: const TextStyle(
-                color: ThemeColors.whiteColor,
-                fontSize: 17.0,
-              ),
-            ),
-          ),
-          Center(
-            child: FlatButton(
-              minWidth: MediaQuery.of(context).size.width * 0.400,
-              onPressed: onUpdate!,
-              child: const Text(
-                'Update Status',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              color: Colors.blue,
-            ),
-          )
         ],
       ),
     );

@@ -41,11 +41,16 @@ class SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: MediaQuery.of(context).size.height / 2,
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 5,
                 width: MediaQuery.of(context).size.width,
-                child:
-                    Hero(tag: 'logo', child: Image.asset('images/logo.jpeg')),
+                child: Hero(
+                    tag: 'logo',
+                    child: Image.asset(
+                      'images/logo.jpeg',
+                      height: MediaQuery.of(context).size.height / 4,
+                      width: MediaQuery.of(context).size.width / 4,
+                    )),
               ),
             ],
           ),

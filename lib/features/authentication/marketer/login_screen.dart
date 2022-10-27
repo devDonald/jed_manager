@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 import 'package:jedmgr/features/authentication/model/marketer_auth_model.dart';
 import 'package:location/location.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 import '../../../core/constants/contants.dart';
 import '../../../core/themes/theme_colors.dart';
@@ -24,8 +24,8 @@ class _MarketerLoginScreenState extends State<MarketerLoginScreen> {
   final TextEditingController _password = TextEditingController();
   LocationData? _currentPosition;
   Location location = Location();
+  String address = '';
 
-  late ProgressDialog pr;
   bool _obscureText = true;
 
   @override
@@ -37,9 +37,6 @@ class _MarketerLoginScreenState extends State<MarketerLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    pr = ProgressDialog(context);
-    pr.style(message: 'Please wait, signing in');
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -174,9 +171,11 @@ class _MarketerLoginScreenState extends State<MarketerLoginScreen> {
                         if (validateLogin(_username.text, _password.text)) {
                           print('latitude: ${_currentPosition!.latitude}');
                           print('longitude: ${_currentPosition!.longitude}');
+                          print("resolved Address: $address");
                           authController.loginMarketer(MarketerAuthModel(
                               marketerId: _username.text,
                               password: _password.text,
+                              resolvedAddress: address,
                               latitude: _currentPosition!.latitude.toString(),
                               longitude:
                                   _currentPosition!.longitude.toString()));
@@ -221,12 +220,24 @@ class _MarketerLoginScreenState extends State<MarketerLoginScreen> {
     }
 
     _currentPosition = await location.getLocation();
+    getAddressFromLatLong(_currentPosition!);
     location.onLocationChanged.listen((LocationData currentLocation) {
       if (mounted) {
         setState(() {
           _currentPosition = currentLocation;
+          getAddressFromLatLong(_currentPosition!);
         });
       }
     });
+  }
+
+  Future<void> getAddressFromLatLong(LocationData position) async {
+    List<geo.Placemark> placemarks = await geo.placemarkFromCoordinates(
+        position.latitude!, position.longitude!);
+    print(placemarks);
+    geo.Placemark place = placemarks[0];
+    address =
+        '${place.street}, ${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+    setState(() {});
   }
 }

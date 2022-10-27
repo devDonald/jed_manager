@@ -13,10 +13,11 @@ import '../../../core/widgets/primary_button.dart';
 
 class CreatePPM extends StatefulWidget {
   static const String id = 'CreatePPM';
-  final String token, longitude, latitude;
+  final String token, longitude, latitude, address;
   const CreatePPM(
       {Key? key,
       required this.token,
+      required this.address,
       required this.longitude,
       required this.latitude})
       : super(key: key);
@@ -43,11 +44,11 @@ class _CreatePPMState extends State<CreatePPM> {
 
   Future<void> getFeeder() async {
     _feederSearch =
-        await FeederServices.getFeeder('marketer/getAllFeeders', widget.token);
+        await HelperServices.getFeeder('marketer/getAllFeeders', widget.token);
   }
 
   Future<void> getDT() async {
-    _dtSearch = await FeederServices.getDT(
+    _dtSearch = await HelperServices.getDT(
         'marketer/getFeederDts', widget.token, feederId);
   }
 
@@ -265,6 +266,7 @@ class _CreatePPMState extends State<CreatePPM> {
                       if (validatePhoneAddress(phone.text, _address.text,
                           _vendingDate.text, _meter_no.text)) {
                         CreatePpmModel model = CreatePpmModel(
+                          resolvedAddress: widget.address,
                           address: _address.text,
                           feederId: int.parse(feederId),
                           dtId: int.parse(dtID),

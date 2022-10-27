@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 class ThemeColors {
   static const primaryColor = Colors.black;
+  static const greenColor = Colors.green;
+  static const orangeColor = Colors.orange;
+  static const yellowColor = Colors.yellow;
+  static const ashColor = Colors.black54;
   static const kellyGreen = Color(0xff0caa35);
   static const emeraldGreenColor = Color(0xff00a163);
   static const purpleColor = Color(0xffc769fc);

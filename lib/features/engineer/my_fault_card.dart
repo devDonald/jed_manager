@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/constants/contants.dart';
 import '../../core/themes/theme_colors.dart';
 import '../../core/themes/theme_text.dart';
 
@@ -10,12 +11,15 @@ class MyFaultCard extends StatelessWidget {
       this.description,
       this.updatedAt,
       this.status,
+      this.faultType,
+      required this.color,
       this.onUpdate})
       : super(key: key);
   final String? createdAt;
   final String? description;
   final String? updatedAt;
-  final String? status;
+  final String? status, faultType;
+  final String color;
   final Function()? onUpdate;
   @override
   Widget build(BuildContext context) {
@@ -44,6 +48,24 @@ class MyFaultCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Text(
+            'Fault Type',
+            style: TextStyle(
+              color: ThemeColors.blackColor1,
+              fontWeight: JanguAskFontWeight.kBoldText,
+              fontSize: 17,
+            ),
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            faultType ?? 'not specified',
+            maxLines: 5,
+            style: const TextStyle(
+              color: ThemeColors.primaryGreyColor,
+              fontSize: 17.0,
+            ),
+          ),
+          const SizedBox(height: 15.0),
           const Text(
             'Description of Fault',
             style: TextStyle(
@@ -106,11 +128,15 @@ class MyFaultCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8.0),
-          Text(
-            status ?? 'not specified',
-            style: const TextStyle(
-              color: ThemeColors.primaryGreyColor,
-              fontSize: 17.0,
+          Container(
+            color: getStyleColor(color),
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              status ?? 'not specified',
+              style: const TextStyle(
+                color: ThemeColors.whiteColor,
+                fontSize: 17.0,
+              ),
             ),
           ),
           Center(
